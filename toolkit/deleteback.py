@@ -6,19 +6,24 @@
 import argparse
 import os
 
-parser = argparse.ArgumentParser(description='後方画像を削除し、前方画像の名前変更')
-parser.add_argument('path', help='path')
-args=parser.parse_args()
+# parser = argparse.ArgumentParser(description='後方画像を削除し、前方画像の名前変更')
+# parser.add_argument('path', help='path')
+# args=parser.parse_args()
 
-print('path:'+args.path)
-files = os.listdir(args.path) 
+target_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+target_path = os.path.join(target_path, 'images')
+print(target_path)
+
+print('path:'+target_path)
+files = os.listdir(target_path) 
+
 for file in files:
     if "前方" in file:
         print("前方:"+file+"→名前変更します")
         afile = file[:15]+".jpg"
-        os.rename(os.path.join(args.path,file), os.path.join(args.path,afile))
+        os.rename(os.path.join(target_path, file), os.path.join(target_path, afile))
     elif "後方" in file:
         print("後方:"+file+"→削除します")
-        os.remove(os.path.join(args.path,file))
+        os.remove(os.path.join(target_path, file))
     else:
         print("error:"+file)
