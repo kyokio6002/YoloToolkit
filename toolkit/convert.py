@@ -1,12 +1,12 @@
-#!/usr/bin/env python
-# -*- coding: utf8 -*-
+'''xml->txt'''
 import os
-from posixpath import basename, sep
-from xml.etree import ElementTree
-from lxml import etree
-import cv2
-from glob import glob
 import pathlib
+from glob import glob
+from xml.etree import ElementTree
+
+import cv2
+
+from lxml import etree
 
 
 XML_EXT = '.xml'
@@ -39,7 +39,7 @@ class PascalVocReader:
         assert self.filepath.endswith(XML_EXT), "Unsupport file format"
         parser = etree.XMLParser(encoding=ENCODE_METHOD)
         xmltree = ElementTree.parse(self.filepath, parser=parser).getroot()
-        filename = xmltree.find('filename').text
+        # filename = xmltree.find('filename').text
         path = xmltree.find('path').text
         try:
             verified = xmltree.attrib['verified']
@@ -60,7 +60,7 @@ class PascalVocReader:
         return True
 
 
-classes = dict()
+classes = {}
 
 # paths/files
 parentpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace(os.sep, '/')
@@ -99,7 +99,7 @@ for count, xmlPath in enumerate(xmlPaths):
             box = shape[1]
 
             # クラス(ラベル)を追加していく
-            if class_name not in classes.keys():
+            if class_name not in classes:
                 classes[class_name] = len(classes)
             class_idx = classes[class_name]
 

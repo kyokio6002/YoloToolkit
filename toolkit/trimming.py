@@ -3,9 +3,11 @@
 リサイズだとプレートがつぶれるからtrimmingを行う
 中央からやや右下の416*416でtrimmingする
 """
-from PIL import Image
-from glob import glob
 import os
+from glob import glob
+
+from PIL import Image
+
 
 class Trimming():
     def __init__(self, left, upper, right, lower):
@@ -46,4 +48,4 @@ if __name__ == "__main__":
     print("upper: {}".format(centerY-208+biasY))
     print("upper: {}".format(centerY+208+biasY))
 
-    Trimming(left,upper,right,lower).All_trimming()
+    Trimming(left, upper, right, lower).All_trimming()

@@ -3,8 +3,8 @@
 1.前方画像は名前変更 ex) XXXXXX前方.jpg -> XXXXXX.jpg
 2.後方画像は削除
 """
-import argparse
 import os
+# import argparse
 
 # use arg
 # parser = argparse.ArgumentParser(description='後方画像を削除し、前方画像の名前変更')
