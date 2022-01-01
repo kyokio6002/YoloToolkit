@@ -1,8 +1,19 @@
+# 不要ファイル
 .DS_Store
 
+# keys
 *.pem
 *.key
 
+# YoloToolkit
 *.jpg
 *.jpeg
 *.png
+*.vott
+*.json
+*PascalVOC-export
+classes.name
+YoloDataset/*.txt
+
+# testファイル
+test.py
