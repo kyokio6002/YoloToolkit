@@ -9,7 +9,7 @@ import os
 
 class Trimming():
     def __init__(self, left, upper, right, lower):
-        self.import_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'images')
+        self.import_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'images').replace(os.sep, '/')
         self.left = left
         self.right = right
         self.upper = upper
