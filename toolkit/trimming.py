@@ -5,10 +5,11 @@
 """
 from PIL import Image
 from glob import glob
+import os
 
 class Trimming():
     def __init__(self, left, upper, right, lower):
-        self.import_path = input("入力ファイルのフォルダパスを入力してください: ")
+        self.import_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'images')
         self.left = left
         self.right = right
         self.upper = upper
