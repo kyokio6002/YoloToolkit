@@ -120,7 +120,7 @@ class MakeDataset:
                     print(class_idx, xcen, ycen, w, h)
 
     def make_namefile(self):
-        '''.dataファイルを作成'''
+        '''.nameファイルを作成'''
         classes_name = os.path.join(self.parentpath, "classes.name").replace(os.sep, '/')
         print(self.classes)
         with open(classes_name, "w") as f:
@@ -166,10 +166,11 @@ class MakeDataset:
             print(len(value))
             with open(txt_path, 'w') as f:
                 for image in value:
-                    path = os.path.join(self.parentpath, 'YoloDataset/{}'.format(image)).replace(os.sep, '/')
-                    f.write(path+'\n')
+                    image = image.replace(os.sep, '/')
+                    f.write(image+'\n')
 
     def make_dataset(self):
+        '''各種実行'''
         self.convert()
         self.make_namefile()
         self.make_datafile()
