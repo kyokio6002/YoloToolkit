@@ -137,11 +137,11 @@ class MakeDataset:
         names_path = os.path.join(self.parentpath, 'classes.name').replace(os.sep, '/')
         backup_path = os.path.join(self.parentpath, 'backup').replace(os.sep, '/')
         with open(datafile, 'w') as f:
-            f.write("classes = {}".format(len(self.classes)))
-            f.write("train = {}".format(train_path))
-            f.write("valid = {}".format(valid_path))
-            f.write("names = {}".format(names_path))
-            f.write("backup = {}".format(backup_path))
+            f.write("classes = {}\n".format(len(self.classes)))
+            f.write("train = {}\n".format(train_path))
+            f.write("valid = {}\n".format(valid_path))
+            f.write("names = {}\n".format(names_path))
+            f.write("backup = {}\n".format(backup_path))
 
     def data_split(self):
         '''train,valid,testに分割する'''
@@ -170,9 +170,9 @@ class MakeDataset:
                     f.write(path+'\n')
 
     def make_dataset(self):
-        # self.convert()
-        # self.make_namefile()
-        # self.make_datafile()
+        self.convert()
+        self.make_namefile()
+        self.make_datafile()
         self.data_split()
 
 
