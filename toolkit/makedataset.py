@@ -1,6 +1,7 @@
 '''xml->txt'''
 import os
 import pathlib
+import random
 from glob import glob
 from xml.etree import ElementTree
 
@@ -152,7 +153,8 @@ class MakeDataset:
 
         # 画像取得
         imagepath = os.path.join(self.parentpath, 'YoloDataset').replace(os.sep, '/')
-        images = glob(imagepath + "/*{}".format(self.ext))  # シャッフルしたい
+        images = glob(imagepath + "/*{}".format(self.ext))
+        random.shuffle(images)  # シャッフル
 
         # 分割
         train_imgs = images[:int(len(images)*train_rate)]
