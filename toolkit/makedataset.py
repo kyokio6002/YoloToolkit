@@ -122,7 +122,7 @@ class MakeDataset:
 
     def make_namefile(self):
         '''.nameファイルを作成'''
-        classes_name = os.path.join(self.parentpath, "classes.name").replace(os.sep, '/')
+        classes_name = os.path.join(self.parentpath, "cfg/classes.name").replace(os.sep, '/')
         print(self.classes)
         with open(classes_name, "w") as f:
             for key in self.classes:
@@ -135,7 +135,7 @@ class MakeDataset:
         # paths
         train_path = os.path.join(self.parentpath, 'cfg/train.txt').replace(os.sep, '/')
         valid_path = os.path.join(self.parentpath, 'cfg/valid.txt').replace(os.sep, '/')
-        names_path = os.path.join(self.parentpath, 'classes.name').replace(os.sep, '/')
+        names_path = os.path.join(self.parentpath, 'cfg/classes.name').replace(os.sep, '/')
         backup_path = os.path.join(self.parentpath, 'backup').replace(os.sep, '/')
         with open(datafile, 'w') as f:
             f.write("classes = {}\n".format(len(self.classes)))
