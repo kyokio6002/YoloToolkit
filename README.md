@@ -12,8 +12,8 @@ darknetを使用した物体検出をサポートします。
 
 **①アノテーションの形式変更(xml->txt)**
 convert.pyを実行すると以下が実行される。
-・`xmlファイル`をパースしてYOLOv4形式の`txtファイル`を作成し`YoloDatasetディレクトリ`に保存する
-・`xmlファイル`に対応する`画像ファイル`も`txtファイル`と同時に`YoloDatasetディレクトリ`にコピーする
+- `xmlファイル`をパースしてYOLOv4形式の`txtファイル`を作成し`YoloDatasetディレクトリ`に保存する
+- `xmlファイル`に対応する`画像ファイル`も`txtファイル`と同時に`YoloDatasetディレクトリ`にコピーする
 
 **②データの分割(train,val,test)**
 アノテーションされたファイルを`train`,`valid`,`test`に分割します。
