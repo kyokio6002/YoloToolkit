@@ -19,9 +19,26 @@ class Trimming():
         self.width = _width
         self.height = _height
 
-    def test_trimming(self):
-        test_image = glob(self.import_path + f"/*{self.ext}")[0]
-        image = Image.open(test_image)
+    def validation(self):
+        images = glob(self.import_path + f"/*.{self.ext}")
+        error_flag = False
+        for image in images:
+            image = Image.open(image)
+            _width, _height = image.size
+            if self.top_x + self.width > _width:
+                error_flag = True
+                break
+            if self.top_y + self.height > _height:
+                error_flag = True
+                break
+        return error_flag
+
+    def demo_trimming(self):
+        test_image = glob(self.import_path + f"/*.{self.ext}")
+        if len(test_image) == 0:
+            print(f"拡張子が{self.ext}の画像が存在しません")
+            return False
+        image = Image.open(test_image[0])
 
         # 領域を囲う
         draw = ImageDraw.Draw(image)
@@ -44,19 +61,15 @@ class Trimming():
         image_trimming.save(file_path)
 
     def All_trimming(self):
-        files = glob(self.import_path + f"/*{self.ext}")
-        for file in files:
-            # print(file)
-            self.trimming(file)
+        images = glob(self.import_path + f"/*.{self.ext}")
+        for image in images:
+            self.trimming(image)
 
 
 if __name__ == "__main__":
     # my setting
-    # left: 852
-    # right: 1268
-    # upper: 664
-    # upper: 1080
-    ext = input("拡張子を入力してください[.jpeg, .jpg,.JPG, .png]:")
+    # (left,upper,left,lower)=(852,664,1268,1080)
+    ext = input("拡張子を入力してください[jpeg, jpg, JPG, png]:")
     print("切り取りを行う左上の座標(x,y), サイズ(width,height)を入力してください")
     top_x = int(input("x:"))
     top_y = int(input("y:"))
@@ -67,5 +80,8 @@ if __name__ == "__main__":
     import_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'images').replace(os.sep, '/')
     trimming = Trimming(import_path, top_x, top_y, width, height, ext)
     # valid
-    if trimming.test_trimming():
-        trimming.All_trimming()
+    if trimming.validation():
+        print("領域が画像範囲がになります")
+    else:
+        if trimming.demo_trimming():
+            trimming.All_trimming()
