@@ -31,3 +31,8 @@ YOLOv4を実行するのに必要な設定ファイルを作成します。
 | .data      |class数、各種pathを記入する　　　|
 
 それぞれ`classes.name`,`test.data`で作成され設定が書き込まれます
+
+## todo
+- makedataset.pyを拡張子指定できるようにする
+- makedataset.pyのtest_rateが0の場合の処理を考える
+- resize.pyの作成
