@@ -52,7 +52,6 @@ class Trimming():
         return False
         
     def trimming(self, file_path):
-        print(f"trimmingを開始します: {file_path}")
         image = Image.open(file_path)
         image_trimming = image.crop((self.top_x,
                                      self.top_y,
@@ -62,7 +61,13 @@ class Trimming():
 
     def All_trimming(self):
         images = glob(self.import_path + f"/*.{self.ext}")
-        for image in images:
+        for index, image in enumerate(images):
+            # progress_bar
+            image_name = os.path.basename(image)
+            prog = int(50*(index+1)/len(images))
+            progress_bar = '#'*(prog) + ' '*(50-prog)
+            print("\r", f"[{progress_bar}] {image_name}", end="")
+
             self.trimming(image)
 
 
