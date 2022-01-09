@@ -9,6 +9,7 @@ def resize(_import_path, _width, _height, _ext):
     images = glob(_import_path + f'/*.{_ext}')
     if not images:
         print(f"拡張子が{_ext}の画像が存在しません")
+        return
     for index, image_path in enumerate(images):
         image = Image.open(image_path)
         image = image.convert('RGB')
