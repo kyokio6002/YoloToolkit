@@ -1,5 +1,6 @@
 '''resize'''
 import os
+import shutil
 from glob import glob
 
 from PIL import Image
@@ -19,7 +20,8 @@ def resize(_import_path, _width, _height, _ext):
         back_ground.save(image_path)
 
         # progress_bar
-        bar_count = 50
+        terminal_width = shutil.get_terminal_size().columns
+        bar_count = min([terminal_width-25, 50])
         prog = bar_count*(index+1)//len(images)
         progress_bar = '#'*(prog) + ' '*(bar_count-prog)
         image_name = os.path.basename(image_path)
