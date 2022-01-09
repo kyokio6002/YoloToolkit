@@ -35,7 +35,7 @@ class Trimming():
 
     def demo_trimming(self):
         test_image = glob(self.import_path + f"/*.{self.ext}")
-        if len(test_image) == 0:
+        if not test_image:
             print(f"拡張子が{self.ext}の画像が存在しません")
             return False
         image = Image.open(test_image[0])
@@ -50,7 +50,7 @@ class Trimming():
         if result == 'y':
             return True
         return False
-        
+
     def trimming(self, file_path):
         image = Image.open(file_path)
         image_trimming = image.crop((self.top_x,
@@ -64,8 +64,9 @@ class Trimming():
         for index, image in enumerate(images):
             # progress_bar
             image_name = os.path.basename(image)
-            prog = int(50*(index+1)/len(images))
-            progress_bar = '#'*(prog) + ' '*(50-prog)
+            bar_count = 50
+            prog = bar_count*(index+1)//len(images)
+            progress_bar = '#'*(prog) + ' '*(bar_count-prog)
             print("\r", f"[{progress_bar}] {image_name}", end="")
 
             self.trimming(image)
