@@ -35,4 +35,3 @@ YOLOv4を実行するのに必要な設定ファイルを作成します。
 ## todo
 - makedataset.pyを拡張子指定できるようにする
 - makedataset.pyのtest_rateが0の場合の処理を考える
-- resize.pyの作成
