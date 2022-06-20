@@ -2,6 +2,7 @@
 import os
 import pathlib
 import random
+import shutil
 from glob import glob
 from xml.etree import ElementTree
 
@@ -81,6 +82,7 @@ class MakeDataset:
 
         xmlPaths = glob(addxmlpath + "/*.xml")
 
+        print('実行中')
         for count, xmlPath in enumerate(xmlPaths):
             tVocParseReader = PascalVocReader(xmlPath)
             shapes = tVocParseReader.getShapes()
@@ -92,8 +94,18 @@ class MakeDataset:
 
             # YoloDatasetにimgを参照元のimgを追加
             img = os.path.join(outputpath, os.path.basename(filename)).replace(os.sep, '/')
-            print("{}/{}: {}".format(count+1, len(xmlPaths), os.path.basename(img)))
             cv2.imwrite(img, cv2.imread(filename))
+
+            # 結果の出力
+            # (1) 逐次詳細出力
+            # print("{}/{}: {}".format(count+1, len(xmlPaths), os.path.basename(img)))
+            # (2)progress_bar
+            terminal_width = shutil.get_terminal_size().columns
+            bar_count = min([terminal_width-25, 50])
+            xml_name = os.path.basename(xmlPath)
+            prog = bar_count*(count+1)//len(xmlPaths)
+            progress_bar = '#'*(prog) + ' '*(bar_count-prog)
+            print('\r', f'[{progress_bar}] {xml_name}({count+1}/{len(xmlPaths)})', end='')
 
             with open(outputFile, "w") as f:
                 for shape in shapes:
@@ -118,7 +130,8 @@ class MakeDataset:
 
                     # 書き込み
                     f.write("%d %.06f %.06f %.06f %.06f\n" % (class_idx, xcen, ycen, w, h))
-                    print(class_idx, xcen, ycen, w, h)
+                    # print(class_idx, xcen, ycen, w, h)
+        print('\n')
 
     def make_namefile(self):
         '''.nameファイルを作成'''
@@ -165,7 +178,7 @@ class MakeDataset:
         datas = {'train': train_imgs, 'valid': valid_imgs, 'test': test_imgs}
         for key, value in datas.items():
             txt_path = os.path.join(self.parentpath, 'cfg/{}.txt'.format(key)).replace(os.sep, '/')
-            print(len(value))
+            print(f'{key}:{len(value)}')
             with open(txt_path, 'w') as f:
                 for image in value:
                     image = image.replace(os.sep, '/')
