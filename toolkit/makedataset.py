@@ -4,6 +4,7 @@ import pathlib
 import random
 import shutil
 from glob import glob
+from pprint import pprint
 from xml.etree import ElementTree
 
 import cv2
@@ -65,6 +66,7 @@ class PascalVocReader:
 class MakeDataset:
     def __init__(self):
         self.classes = {}
+        self.class_count = {}
         self.parentpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace(os.sep, '/')
         self.ext = '.jpg'  # [.jpg or .png]
 
@@ -119,6 +121,11 @@ class MakeDataset:
                         self.classes[class_name] = len(self.classes)
                     class_idx = self.classes[class_name]
 
+                    # classをカウントする
+                    if class_name not in self.class_count:
+                        self.class_count[class_name] = 1
+                    self.class_count[class_name] += 1
+
                     (height, width, _) = cv2.imread(filename).shape
                     coord_min = box[0]
                     coord_max = box[2]
@@ -136,7 +143,8 @@ class MakeDataset:
     def make_namefile(self):
         '''.nameファイルを作成'''
         classes_name = os.path.join(self.parentpath, "cfg/classes.name").replace(os.sep, '/')
-        print(self.classes)
+        pprint(sorted(self.classes.items()))
+        pprint(sorted(self.class_count.items()))
         with open(classes_name, "w") as f:
             for key in self.classes:
                 # print(key)
