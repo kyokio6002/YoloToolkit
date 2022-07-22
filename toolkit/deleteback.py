@@ -18,12 +18,15 @@ print('path:'+target_path)
 files = os.listdir(target_path) 
 
 for file in files:
-    if "前方" in file:
-        print("前方:"+file+"→名前変更します")
-        afile = file[:15]+".jpg"
-        os.rename(os.path.join(target_path, file), os.path.join(target_path, afile))
-    elif "後方" in file:
-        print("後方:"+file+"→削除します")
-        os.remove(os.path.join(target_path, file))
-    else:
-        print("error:"+file)
+    try:
+        if "前方" in file:
+            print(f'ファイル名変更: {file}')
+            afile = file[:15]+".jpg"
+            os.rename(os.path.join(target_path, file), os.path.join(target_path, afile))
+        elif "後方" in file:
+            print(f'ファイルを削除: {file}')
+            os.remove(os.path.join(target_path, file))
+        else:
+            print("error:"+file)
+    except FileExistsError:
+        print(f'同名ファイルが存在します: {file}')
