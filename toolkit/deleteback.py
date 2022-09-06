@@ -15,7 +15,7 @@ target_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 target_path = os.path.join(target_path, 'images').replace(os.sep, '/')
 
 print('path:'+target_path)
-files = os.listdir(target_path) 
+files = os.listdir(target_path)
 
 for file in files:
     try:
