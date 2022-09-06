@@ -19,6 +19,7 @@ cfg/*.data
 cfg/*.cfg
 backup/*.weights
 yolov4.conv.137
+__pycache__/
 
 # testファイル
 test.py
