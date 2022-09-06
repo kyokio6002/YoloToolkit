@@ -170,7 +170,9 @@ class MakeDataset:
         # 画像取得
         imagepath = os.path.join(self.parentpath, 'YoloDataset').replace(os.sep, '/')
         images = glob(imagepath + f'/*{self.ext}')
-        random.shuffle(images)  # シャッフル
+
+        random.seed(100)
+        random.shuffle(images)
 
         # 分割
         train_imgs = images[:int(len(images)*train_rate)]
