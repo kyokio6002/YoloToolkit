@@ -1,13 +1,15 @@
-"""
+'''
 画像をtrimmingする
 リサイズだとプレートがつぶれるからtrimmingを行う
 中央からやや右下の416*416でtrimmingする
-"""
+'''
 import os
 import shutil
 from glob import glob
 
 from PIL import Image, ImageDraw
+
+from progressbar import show_progress_bar
 
 
 class Trimming():
@@ -63,15 +65,9 @@ class Trimming():
     def All_trimming(self):
         images = glob(self.import_path + f"/*.{self.ext}")
         for index, image in enumerate(images):
-            # progress_bar
-            terminal_width = shutil.get_terminal_size().columns
-            bar_count = min([terminal_width-25, 50])
-            image_name = os.path.basename(image)
-            prog = bar_count*(index+1)//len(images)
-            progress_bar = '#'*(prog) + ' '*(bar_count-prog)
-            print("\r", f"[{progress_bar}] {image_name}", end="")
-
             self.trimming(image)
+            show_progress_bar(index, image, max_size=len(images))
+
 
 
 if __name__ == "__main__":
