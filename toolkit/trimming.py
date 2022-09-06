@@ -87,7 +87,6 @@ def main():
     top_y = int(input("y:"))
     width = int(input("width:"))
     height = int(input("height:"))
-    print("")
 
     trimming = Trimming(import_path, top_x, top_y, width, height, ext)
     if trimming.validation():
