@@ -2,7 +2,6 @@
 import os
 import pathlib
 import random
-import shutil
 from glob import glob
 from pprint import pprint
 from xml.etree import ElementTree
@@ -11,9 +10,12 @@ import cv2
 
 from lxml import etree
 
+from progressbar import show_progress_bar
+
 
 XML_EXT = '.xml'
 ENCODE_METHOD = 'utf-8'
+
 
 class PascalVocReader:
     def __init__(self, filepath):
@@ -54,7 +56,6 @@ class PascalVocReader:
         for object_iter in xmltree.findall('object'):
             bndbox = object_iter.find("bndbox")
             label = object_iter.find('name').text
-            # Add chris
 
             difficult = False
             if object_iter.find('difficult') is not None:
@@ -78,6 +79,7 @@ class MakeDataset:
             print("vocFileが複数存在します")
         else:
             vocFile = vocFile[0].replace(os.sep, '/')
+
         addxmlpath = os.path.join(vocFile, "Annotations").replace(os.sep, '/')
         addimgpath = os.path.join(vocFile, "JPEGImages") .replace(os.sep, '/')
         outputpath = os.path.join(self.parentpath, "YoloDataset").replace(os.sep, '/')
@@ -100,14 +102,9 @@ class MakeDataset:
 
             # 結果の出力
             # (1) 逐次詳細出力
-            # print("{}/{}: {}".format(count+1, len(xmlPaths), os.path.basename(img)))
+            # print(f'{count+1}/{len(xmlPaths)}: {os.path.basename(img)}')
             # (2)progress_bar
-            terminal_width = shutil.get_terminal_size().columns
-            bar_count = min([terminal_width-25, 50])
-            xml_name = os.path.basename(xmlPath)
-            prog = bar_count*(count+1)//len(xmlPaths)
-            progress_bar = '#'*(prog) + ' '*(bar_count-prog)
-            print('\r', f'[{progress_bar}] {xml_name}({count+1}/{len(xmlPaths)})', end='')
+            show_progress_bar(count, xmlPath, max_size=len(xmlPaths))
 
             with open(outputFile, "w") as f:
                 for shape in shapes:
@@ -137,7 +134,6 @@ class MakeDataset:
 
                     # 書き込み
                     f.write("%d %.06f %.06f %.06f %.06f\n" % (class_idx, xcen, ycen, w, h))
-                    # print(class_idx, xcen, ycen, w, h)
         print('\n')
 
     def make_namefile(self):
@@ -147,8 +143,7 @@ class MakeDataset:
         pprint(sorted(self.class_count.items()))
         with open(classes_name, "w") as f:
             for key in self.classes:
-                # print(key)
-                f.write("%s\n" % key)
+                f.write(f'{key}\n')
 
     def make_datafile(self):
         '''.dataファイルを作成'''
@@ -159,11 +154,11 @@ class MakeDataset:
         names_path = os.path.join(self.parentpath, 'cfg/classes.name').replace(os.sep, '/')
         backup_path = os.path.join(self.parentpath, 'backup').replace(os.sep, '/')
         with open(datafile, 'w') as f:
-            f.write("classes = {}\n".format(len(self.classes)))
-            f.write("train = {}\n".format(train_path))
-            f.write("valid = {}\n".format(valid_path))
-            f.write("names = {}\n".format(names_path))
-            f.write("backup = {}\n".format(backup_path))
+            f.write(f'classes = {len(self.classes)}\n')
+            f.write(f'train = {train_path}\n')
+            f.write(f'valid = {valid_path}\n')
+            f.write(f'names = {names_path}\n')
+            f.write(f'backup = {backup_path}\n')
 
     def data_split(self):
         '''train,valid,testに分割する'''
@@ -174,18 +169,18 @@ class MakeDataset:
 
         # 画像取得
         imagepath = os.path.join(self.parentpath, 'YoloDataset').replace(os.sep, '/')
-        images = glob(imagepath + "/*{}".format(self.ext))
+        images = glob(imagepath + f'/*{self.ext}')
         random.shuffle(images)  # シャッフル
 
         # 分割
         train_imgs = images[:int(len(images)*train_rate)]
         valid_imgs = images[int(len(images)*train_rate):int(len(images)*(train_rate+valid_rate))]
-        test_imgs = images[int(len(images)*(train_rate+valid_rate)):]
+        test_imgs  = images[int(len(images)*(train_rate+valid_rate)):]
 
         # 書き込み
         datas = {'train': train_imgs, 'valid': valid_imgs, 'test': test_imgs}
         for key, value in datas.items():
-            txt_path = os.path.join(self.parentpath, 'cfg/{}.txt'.format(key)).replace(os.sep, '/')
+            txt_path = os.path.join(self.parentpath, f'cfg/{key}.txt').replace(os.sep, '/')
             print(f'{key}:{len(value)}')
             with open(txt_path, 'w') as f:
                 for image in value:

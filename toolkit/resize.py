@@ -25,9 +25,15 @@ def resize(_import_path, _width, _height, _ext):
         show_progress_bar(index, image_path, max_size=len(images))
 
 
-if __name__ == '__main__':
+def main():
     import_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'images').replace(os.sep, '/')
+
     ext = input("拡張子を入力してください[jpeg, jpg, JPG, png]:")
     width = int(input("width:"))
     height = int(input("height:"))
+
     resize(import_path, width, height, ext)
+
+
+if __name__ == '__main__':
+    main()
