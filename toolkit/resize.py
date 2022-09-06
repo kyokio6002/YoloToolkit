@@ -1,9 +1,11 @@
 '''resize'''
 import os
-import shutil
 from glob import glob
 
 from PIL import Image
+
+from progressbar import show_progress_bar
+
 
 def resize(_import_path, _width, _height, _ext):
     images = glob(_import_path + f'/*.{_ext}')
@@ -20,18 +22,18 @@ def resize(_import_path, _width, _height, _ext):
         back_ground.paste(image)
         back_ground.save(image_path)
 
-        # progress_bar
-        terminal_width = shutil.get_terminal_size().columns
-        bar_count = min([terminal_width-25, 50])
-        prog = bar_count*(index+1)//len(images)
-        progress_bar = '#'*(prog) + ' '*(bar_count-prog)
-        image_name = os.path.basename(image_path)
-        print("\r", f"[{progress_bar}] {image_name}", end="")
+        show_progress_bar(index, image_path, max_size=len(images))
 
 
-if __name__ == '__main__':
+def main():
     import_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'images').replace(os.sep, '/')
+
     ext = input("拡張子を入力してください[jpeg, jpg, JPG, png]:")
     width = int(input("width:"))
     height = int(input("height:"))
+
     resize(import_path, width, height, ext)
+
+
+if __name__ == '__main__':
+    main()
