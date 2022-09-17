@@ -41,10 +41,9 @@ class PascalVocReader:
         self.shapes.append((label, points, filename, difficult))
 
     def parseXML(self):
-        assert self.filepath.endswith(XML_EXT), "Unsupport file format"
+        assert self.filepath.endswith(XML_EXT), 'Unsupport file format'
         parser = etree.XMLParser(encoding=ENCODE_METHOD)
         xmltree = ElementTree.parse(self.filepath, parser=parser).getroot()
-        # filename = xmltree.find('filename').text
         path = xmltree.find('path').text
         try:
             verified = xmltree.attrib['verified']
@@ -54,7 +53,7 @@ class PascalVocReader:
             self.verified = False
 
         for object_iter in xmltree.findall('object'):
-            bndbox = object_iter.find("bndbox")
+            bndbox = object_iter.find('bndbox')
             label = object_iter.find('name').text
 
             difficult = False
@@ -70,43 +69,44 @@ class MakeDataset:
         self.class_count = {}
         self.parentpath = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace(os.sep, '/')
         self.ext = '.jpg'  # [.jpg or .png]
+        try:
+            self.convert()
+            self.make_namefile()
+            self.make_datafile()
+            self.data_split()
+        except:
+            pass
+
 
     def convert(self):
         '''xml->txt'''
-        # paths/files
-        vocFile = glob(os.path.join(self.parentpath, 'VoTT').replace(os.sep, '/') + "/*PascalVOC-export")
+        vocFile = glob(os.path.join(self.parentpath, 'VoTT').replace(os.sep, '/') + '/*PascalVOC-export')
         if len(vocFile) > 1:
-            print("vocFileが複数存在します")
+            print('vocFileが複数存在します')
         else:
             vocFile = vocFile[0].replace(os.sep, '/')
 
-        addxmlpath = os.path.join(vocFile, "Annotations").replace(os.sep, '/')
-        addimgpath = os.path.join(vocFile, "JPEGImages") .replace(os.sep, '/')
-        outputpath = os.path.join(self.parentpath, "YoloDataset").replace(os.sep, '/')
+        addxmlpath = os.path.join(vocFile, 'Annotations').replace(os.sep, '/')
+        addimgpath = os.path.join(vocFile, 'JPEGImages') .replace(os.sep, '/')
+        outputpath = os.path.join(self.parentpath, 'YoloDataset').replace(os.sep, '/')
 
-        xmlPaths = glob(addxmlpath + "/*.xml")
+        xmlPaths = glob(addxmlpath + '/*.xml')
 
         print('実行中')
         for count, xmlPath in enumerate(xmlPaths):
             tVocParseReader = PascalVocReader(xmlPath)
             shapes = tVocParseReader.getShapes()
 
-            # 拡張子変換した出力ファイルを設定
-            outputFile = os.path.join(outputpath, pathlib.PurePath(xmlPath).stem+".txt").replace(os.sep, '/')
-            # imgpath
+            outputFile = os.path.join(outputpath, pathlib.PurePath(xmlPath).stem+'.txt').replace(os.sep, '/')
             filename = os.path.join(addimgpath, pathlib.PurePath(xmlPath).stem+self.ext).replace(os.sep, '/')
 
             # YoloDatasetにimgを参照元のimgを追加
             img = os.path.join(outputpath, os.path.basename(filename)).replace(os.sep, '/')
             cv2.imwrite(img, cv2.imread(filename))
 
-            # 結果の出力
-            # (1) 逐次詳細出力
-            # print(f'{count+1}/{len(xmlPaths)}: {os.path.basename(img)}')
-            # (2)progress_bar
             show_progress_bar(count, xmlPath, max_size=len(xmlPaths))
 
-            with open(outputFile, "w") as f:
+            with open(outputFile, 'w', encoding='utf-8') as f:
                 for shape in shapes:
                     # shape:[label, bndbox, path, difficult]
                     class_name = shape[0]
@@ -127,33 +127,36 @@ class MakeDataset:
                     coord_min = box[0]
                     coord_max = box[2]
 
-                    xcen = float((coord_min[0] + coord_max[0])) / 2 / width
-                    ycen = float((coord_min[1] + coord_max[1])) / 2 / height
+                    x_center = float((coord_min[0] + coord_max[0])) / 2 / width
+                    y_center = float((coord_min[1] + coord_max[1])) / 2 / height
                     w = float((coord_max[0] - coord_min[0])) / width
                     h = float((coord_max[1] - coord_min[1])) / height
 
                     # 書き込み
-                    f.write("%d %.06f %.06f %.06f %.06f\n" % (class_idx, xcen, ycen, w, h))
+                    f.write(f'{class_idx} {x_center:.06f} {y_center:.06f} {w:.06f} {h:.06f}\n')
         print('\n')
 
     def make_namefile(self):
         '''.nameファイルを作成'''
-        classes_name = os.path.join(self.parentpath, "cfg/classes.name").replace(os.sep, '/')
+        classes_name = os.path.join(self.parentpath, 'cfg/classes.name').replace(os.sep, '/')
         pprint(sorted(self.classes.items()))
         pprint(sorted(self.class_count.items()))
-        with open(classes_name, "w") as f:
+        with open(classes_name, 'w', encoding='utf-8') as f:
             for key in self.classes:
                 f.write(f'{key}\n')
 
     def make_datafile(self):
         '''.dataファイルを作成'''
+
         datafile = os.path.join(self.parentpath, 'cfg/test.data').replace(os.sep, '/')
+
         # paths
-        train_path = os.path.join(self.parentpath, 'cfg/train.txt').replace(os.sep, '/')
-        valid_path = os.path.join(self.parentpath, 'cfg/valid.txt').replace(os.sep, '/')
-        names_path = os.path.join(self.parentpath, 'cfg/classes.name').replace(os.sep, '/')
+        train_path  = os.path.join(self.parentpath, 'cfg/train.txt').replace(os.sep, '/')
+        valid_path  = os.path.join(self.parentpath, 'cfg/valid.txt').replace(os.sep, '/')
+        names_path  = os.path.join(self.parentpath, 'cfg/classes.name').replace(os.sep, '/')
         backup_path = os.path.join(self.parentpath, 'backup').replace(os.sep, '/')
-        with open(datafile, 'w') as f:
+
+        with open(datafile, 'w', encoding='utf-8') as f:
             f.write(f'classes = {len(self.classes)}\n')
             f.write(f'train = {train_path}\n')
             f.write(f'valid = {valid_path}\n')
@@ -184,18 +187,11 @@ class MakeDataset:
         for key, value in datas.items():
             txt_path = os.path.join(self.parentpath, f'cfg/{key}.txt').replace(os.sep, '/')
             print(f'{key}:{len(value)}')
-            with open(txt_path, 'w') as f:
+            with open(txt_path, 'w', encoding='utf-8') as f:
                 for image in value:
                     image = image.replace(os.sep, '/')
                     f.write(image+'\n')
 
-    def make_dataset(self):
-        '''各種実行'''
-        self.convert()
-        self.make_namefile()
-        self.make_datafile()
-        self.data_split()
 
-
-if __name__ == "__main__":
-    MakeDataset().make_dataset()
+if __name__ == '__main__':
+    MakeDataset()
